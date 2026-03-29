@@ -1,0 +1,31 @@
+name: Daily EPG Update
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # كل يوم الساعة 03:00 UTC
+  workflow_dispatch:     # لتشغيله يدويًا
+
+jobs:
+  fetch-and-push-epg:
+    runs-on: ubuntu-latest
+
+    steps:
+      # سحب الريبو
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true  # للسماح للسكريبت بعمل push
+
+      # إعداد Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # تثبيت dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # تشغيل السكريبت الذي يكتب ويعمل push تلقائيًا
+      - name: Run EPG Script
+        run: node scripts/fetch-epg.js

@@ -3,7 +3,7 @@ const path = require('path');
 const axios = require('axios');
 const xml2js = require('xml2js');
 const dayjs = require('dayjs');
-const config = require('../data/programme-tv.net.config.js'); // ضبط المسار حسب مجلدك
+const config = require('../data/programme-tv.net.config.js');
 const channelsXmlFile = path.join(__dirname, '../data/programme-tv.net.channels.xml');
 
 async function loadChannels() {
@@ -58,7 +58,20 @@ async function main() {
   const fileName = `epg-${dayjs(date).format('YYYY-MM-DD')}.xml`;
   const outputFile = path.join(epgDir, fileName);
   fs.writeFileSync(outputFile, xmlBuilder.buildObject(xmlData), 'utf-8');
-  console.log(`تم إنشاء ملف EPG: ${outputFile}`);
+  console.log(`تم كتابة ملف EPG: ${outputFile}`);
+
+  // Git push تلقائي
+  const { execSync } = require('child_process');
+  try {
+    execSync('git config user.name "github-actions[bot]"');
+    execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
+    execSync(`git add epg/${fileName}`);
+    execSync(`git commit -m "Update EPG for ${dayjs(date).format('YYYY-MM-DD')}"`);
+    execSync('git push');
+    console.log('تم رفع ملف EPG إلى الريبو بنجاح.');
+  } catch (err) {
+    console.log('لا توجد تغييرات جديدة للرفع أو حدث خطأ في Git:', err.message);
+  }
 }
 
 main();

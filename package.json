@@ -1,0 +1,16 @@
+{
+  "name": "france-epg-xml",
+  "version": "1.0.0",
+  "description": "Fetch EPG from programme-tv.net and generate XMLTV files",
+  "main": "scripts/fetch-epg.js",
+  "scripts": {
+    "fetch": "node scripts/fetch-epg.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "dayjs": "^1.11.9",
+    "parse-duration": "^1.0.0",
+    "xml2js": "^0.4.23"
+  }
+}

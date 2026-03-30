@@ -1,0 +1,45 @@
+name: EPG TV Blue Update
+
+on:
+  schedule:
+    - cron: "0 4 * * *"  # يمكنك تغييره لتفادي تداخل التشغيل
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  epg_tv_blue:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Clone EPG repo
+        run: |
+          git clone --depth 1 https://github.com/iptv-org/epg.git
+          cd epg
+          npm install
+
+      - name: Generate EPG (tv.blue.ch)
+        run: |
+          cd epg
+          npm run grab --- --site=tv.blue.ch
+
+      - name: Save XML
+        run: |
+          mkdir -p public
+          cp epg/guide.xml public/epg-tv-blue.xml
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git diff-index --quiet HEAD || git commit -m "Update EPG tv.blue.ch"
+          git push

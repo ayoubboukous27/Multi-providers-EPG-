@@ -1,8 +1,37 @@
-- name: Clone TV Logos repo
-  run: git clone https://github.com/tv-logo/tv-logos.git
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-- name: Generate logos mapping
-  run: node generate-logos-mapping.js
+// 1️⃣ Clone repository tv-logos
+const repoUrl = 'https://github.com/tv-logo/tv-logos.git';
+const cloneDir = path.join(__dirname, 'tv-logos');
 
-- name: Add logos to XML
-  run: node add-logos.js
+if (!fs.existsSync(cloneDir)) {
+  console.log('📥 Cloning tv-logos repository...');
+  execSync(`git clone ${repoUrl} ${cloneDir}`, { stdio: 'inherit' });
+} else {
+  console.log('✅ tv-logos repo already exists. Pulling latest changes...');
+  execSync(`git -C ${cloneDir} pull`, { stdio: 'inherit' });
+}
+
+// 2️⃣ Generate mapping JSON for France
+const franceDir = path.join(cloneDir, 'countries', 'france');
+
+if (!fs.existsSync(franceDir)) {
+  console.error('❌ France folder not found in tv-logos repo!');
+  process.exit(1);
+}
+
+const files = fs.readdirSync(franceDir);
+const mapping = {};
+
+// لكل ملف شعار، أضف إلى mapping
+files.forEach(file => {
+  const name = path.basename(file, path.extname(file)).toLowerCase(); // اسم القناة lowercase
+  mapping[name] = `https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/${file}`;
+});
+
+// حفظ mapping في ملف JSON
+const outputFile = path.join(__dirname, 'logos-fr.json');
+fs.writeFileSync(outputFile, JSON.stringify(mapping, null, 2));
+console.log(`✅ Mapping JSON created: ${outputFile}`);

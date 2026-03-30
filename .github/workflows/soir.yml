@@ -1,0 +1,47 @@
+name: EPG TV CEssoir Update
+
+on:
+  schedule:
+    - cron: "0 6 * * *"    # تحديث يوميًا الساعة 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  epg_tvcesoir:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Clone EPG repo
+        run: |
+          git clone --depth 1 https://github.com/iptv-org/epg.git
+          cd epg
+          npm install
+
+      - name: Generate EPG (tvcesoir.fr)
+        run: |
+          cd epg
+          npm run grab --- --site=tvcesoir.fr
+
+      - name: Save XML
+        run: |
+          mkdir -p public
+          cp epg/guide.xml public/epg-tvcesoir.xml
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add public/epg-tvcesoir.xml
+          git diff-index --quiet HEAD || git commit -m "Update EPG tvcesoir.fr"
+          git pull --rebase origin main
+          git push origin main

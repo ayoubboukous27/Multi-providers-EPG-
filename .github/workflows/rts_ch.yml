@@ -46,7 +46,7 @@ jobs:
       - name: Generate 10-day EPG
         run: |
           cd epg
-          npm run grab --- --site=rts.ch --days=20
+          npm run grab --- --site=rts.ch --days=5
 
       # --------------------------
       # Replace old icons with RTS logos

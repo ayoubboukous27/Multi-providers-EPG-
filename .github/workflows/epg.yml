@@ -42,14 +42,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add public/guide.xml
-          git commit -m "Update EPG" || echo "No changes"
-          git push      mkdir -p public
-      cp epg/guide.xml public/guide.xml
-
-  - name: Commit changes
-    run: |
-      git config user.name "github-actions"
-      git config user.email "actions@github.com"
-      git add public/guide.xml
-      git commit -m "EPG update" || exit 0
-      git push
+          git diff-index --quiet HEAD || git commit -m "Update EPG"
+          git push

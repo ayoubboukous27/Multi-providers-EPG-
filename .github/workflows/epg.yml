@@ -30,7 +30,7 @@ jobs:
       - name: Generate EPG (programme-tv.net)
         run: |
           cd epg
-          npm run grab --- --site=programme-tv.net
+          npm run grab --- --site=programme-tv.net --days=7
 
       - name: Save XML
         run: |

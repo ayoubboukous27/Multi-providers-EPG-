@@ -1,77 +1,87 @@
+// scripts/fetch-epg-api.js
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 const xml2js = require('xml2js');
 const dayjs = require('dayjs');
-const config = require('../data/programme-tv.net.config.js');
-const channelsXmlFile = path.join(__dirname, '../data/programme-tv.net.channels.xml');
 
-async function loadChannels() {
-  const xmlData = fs.readFileSync(channelsXmlFile, 'utf-8');
+// ملفات البيانات
+const DATA_DIR = path.join(__dirname, '../data');
+const CHANNELS_FILE = path.join(DATA_DIR, 'programme-tv.net.channels.xml');
+const EPG_DIR = path.join(__dirname, '../epg');
+
+// إنشاء مجلد epg إذا لم يكن موجود
+if (!fs.existsSync(EPG_DIR)) fs.mkdirSync(EPG_DIR);
+
+// قراءة القنوات من XML
+const parseChannels = () => {
+  const xml = fs.readFileSync(CHANNELS_FILE, 'utf-8');
   const parser = new xml2js.Parser();
-  const result = await parser.parseStringPromise(xmlData);
-  return result.channels.channel.map(ch => ({
-    name: ch._,
-    site_id: ch.$.site_id,
-    xmltv_id: ch.$.xmltv_id || ch.$.site_id,
-  }));
-}
-
-async function fetchEPG(channel, date) {
-  const url = config.url({ date: dayjs(date), channel });
-  try {
-    const response = await axios.get(url, config.request);
-    const programs = config.parser({ content: response.data, date: dayjs(date) });
-    return programs.map(p => ({
-      title: p.title,
-      subtitle: p.subTitle,
-      category: p.category,
-      start: p.start.format('YYYYMMDDHHmmss Z'),
-      stop: p.stop.format('YYYYMMDDHHmmss Z'),
-      channel_id: channel.xmltv_id
+  return parser.parseStringPromise(xml).then(result => {
+    return result.channels.channel.map(ch => ({
+      name: ch._,
+      site_id: ch.$.site_id,
+      xmltv_id: ch.$.xmltv_id || ch.$.site_id
     }));
-  } catch (error) {
-    console.error(`خطأ في سحب EPG للقناة ${channel.name}:`, error.message);
+  });
+};
+
+// تحويل وقت إلى صيغة XMLTV
+const xmltvTime = dt => dayjs(dt).format('YYYYMMDDHHmmss Z');
+
+// تحويل JSON البرنامج إلى XML
+const buildXmlTV = (channels, programs) => {
+  const tv = {
+    tv: {
+      channel: channels.map(ch => ({ $: { id: ch.xmltv_id }, 'display-name': ch.name })),
+      programme: programs
+    }
+  };
+  const builder = new xml2js.Builder({ headless: true, rootName: 'tv' });
+  return builder.buildObject(tv);
+};
+
+// جلب EPG لكل قناة عبر API
+const fetchChannelEPG = async (channel, dateStr) => {
+  try {
+    const url = `https://api-tel.programme-tv.net/modern/channels/${channel.site_id}/programs?date=${dateStr}`;
+    const res = await axios.get(url, { headers: { 'Accept': 'application/json' } });
+    const programs = res.data.programs || [];
+    return programs.map(p => {
+      const start = dayjs(p.start);
+      const stop = dayjs(p.end);
+      const prog = {
+        $: {
+          start: xmltvTime(start),
+          stop: xmltvTime(stop),
+          channel: channel.xmltv_id
+        },
+        title: p.title,
+      };
+      if (p.subtitle) prog['sub-title'] = p.subtitle;
+      if (p.category) prog.category = p.category;
+      return prog;
+    });
+  } catch (err) {
+    console.error(`خطأ في جلب EPG للقناة ${channel.name}:`, err.message);
     return [];
   }
-}
+};
 
-async function main() {
-  const channels = await loadChannels();
-  const date = new Date();
-  const xmlBuilder = new xml2js.Builder({ headless: true, rootName: 'tv' });
-  const xmlData = { channel: [], programme: [] };
+// Main
+(async () => {
+  const dateStr = dayjs().format('YYYY-MM-DD');
+  const channels = await parseChannels();
 
-  for (const channel of channels) {
-    xmlData.channel.push({ $: { id: channel.xmltv_id }, display_name: channel.name });
-    const epgPrograms = await fetchEPG(channel, date);
-    epgPrograms.forEach(p => {
-      const programme = { $: { start: p.start, stop: p.stop, channel: p.channel_id }, title: p.title };
-      if (p.subtitle) programme.subtitle = p.subtitle;
-      if (p.category) programme.category = p.category;
-      xmlData.programme.push(programme);
-    });
+  let allPrograms = [];
+  for (const ch of channels) {
+    console.log(`جارٍ جلب EPG للقناة: ${ch.name}`);
+    const programs = await fetchChannelEPG(ch, dateStr);
+    allPrograms = allPrograms.concat(programs);
   }
 
-  const epgDir = path.join(__dirname, '../epg');
-  if (!fs.existsSync(epgDir)) fs.mkdirSync(epgDir);
-  const fileName = `epg-${dayjs(date).format('YYYY-MM-DD')}.xml`;
-  const outputFile = path.join(epgDir, fileName);
-  fs.writeFileSync(outputFile, xmlBuilder.buildObject(xmlData), 'utf-8');
-  console.log(`تم كتابة ملف EPG: ${outputFile}`);
-
-  // Git push تلقائي
-  const { execSync } = require('child_process');
-  try {
-    execSync('git config user.name "github-actions[bot]"');
-    execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
-    execSync(`git add epg/${fileName}`);
-    execSync(`git commit -m "Update EPG for ${dayjs(date).format('YYYY-MM-DD')}"`);
-    execSync('git push');
-    console.log('تم رفع ملف EPG إلى الريبو بنجاح.');
-  } catch (err) {
-    console.log('لا توجد تغييرات جديدة للرفع أو حدث خطأ في Git:', err.message);
-  }
-}
-
-main();
+  const xmlContent = buildXmlTV(channels, allPrograms);
+  const fileName = path.join(EPG_DIR, `epg-${dateStr}.xml`);
+  fs.writeFileSync(fileName, xmlContent, 'utf-8');
+  console.log(`تم إنشاء ملف EPG: ${fileName}`);
+})();

@@ -2,7 +2,9 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// 1️⃣ Clone repository tv-logos
+// ----------------------
+// 1️⃣ Clone tv-logos repo
+// ----------------------
 const repoUrl = 'https://github.com/tv-logo/tv-logos.git';
 const cloneDir = path.join(__dirname, 'tv-logos');
 
@@ -14,7 +16,9 @@ if (!fs.existsSync(cloneDir)) {
   execSync(`git -C ${cloneDir} pull`, { stdio: 'inherit' });
 }
 
-// 2️⃣ Generate mapping JSON for France
+// ----------------------
+// 2️⃣ Generate mapping for France
+// ----------------------
 const franceDir = path.join(cloneDir, 'countries', 'france');
 
 if (!fs.existsSync(franceDir)) {
@@ -25,13 +29,14 @@ if (!fs.existsSync(franceDir)) {
 const files = fs.readdirSync(franceDir);
 const mapping = {};
 
-// لكل ملف شعار، أضف إلى mapping
+// لكل شعار، استخدم اسم الملف (lowercase) كـ key
 files.forEach(file => {
   const name = path.basename(file, path.extname(file)).toLowerCase(); // اسم القناة lowercase
   mapping[name] = `https://raw.githubusercontent.com/tv-logo/tv-logos/main/countries/france/${file}`;
 });
 
-// حفظ mapping في ملف JSON
+// حفظ Mapping JSON
 const outputFile = path.join(__dirname, 'logos-fr.json');
 fs.writeFileSync(outputFile, JSON.stringify(mapping, null, 2));
-console.log(`✅ Mapping JSON created: ${outputFile}`);
+
+console.log(`✅ Mapping JSON created successfully: ${outputFile}`);

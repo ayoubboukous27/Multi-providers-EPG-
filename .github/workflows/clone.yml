@@ -2,7 +2,7 @@ name: Generate 7-day EPG France + Logos
 
 on:
   schedule:
-    - cron: "0 8 * * *"  # تشغيل يوميًا الساعة 08:00 UTC
+    - cron: "0 8 * * *"  # يوميًا الساعة 08:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -13,32 +13,59 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------
+      # Checkout repo
+      # --------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --------------------------
+      # Setup Node.js
+      # --------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       # --------------------------
-      # Clone tv-logos repository
+      # Clone iptv-org/epg
       # --------------------------
-      - name: Clone TV Logos repo
+      - name: Clone EPG repository
         run: |
-          if [ ! -d "tv-logos" ]; then
-            echo "📥 Cloning tv-logos..."
-            git clone https://github.com/tv-logo/tv-logos.git
+          if [ ! -d "epg" ]; then
+            echo "📥 Cloning iptv-org/epg..."
+            git clone --depth 1 https://github.com/iptv-org/epg.git
           else
-            echo "✅ tv-logos exists, pulling latest..."
-            git -C tv-logos pull
+            echo "✅ epg repo exists, pulling latest..."
+            git -C epg pull
           fi
 
       # --------------------------
-      # Generate logos mapping
+      # Install npm dependencies inside epg
       # --------------------------
-      - name: Generate logos mapping
+      - name: Install EPG dependencies
         run: |
+          cd epg
+          npm install
+
+      # --------------------------
+      # Generate 7-day EPG
+      # --------------------------
+      - name: Generate 7-day EPG (programme-tv.net)
+        run: |
+          cd epg
+          npm run grab --- --site=programme-tv.net --days=7
+
+      # --------------------------
+      # Clone TV Logos repo and generate mapping
+      # --------------------------
+      - name: Clone TV Logos & generate mapping
+        run: |
+          if [ ! -d "tv-logos" ]; then
+            git clone https://github.com/tv-logo/tv-logos.git
+          else
+            git -C tv-logos pull
+          fi
           node <<'EOF'
           const fs = require('fs');
           const path = require('path');
@@ -52,14 +79,6 @@ jobs:
           fs.writeFileSync('logos-fr.json', JSON.stringify(mapping, null, 2));
           console.log('✅ logos-fr.json generated');
           EOF
-
-      # --------------------------
-      # Generate 7-day EPG
-      # --------------------------
-      - name: Generate 7-day EPG (programme-tv.net)
-        run: |
-          npm install
-          npm run grab --- --site=programme-tv.net --days=7
 
       # --------------------------
       # Add logos to XML

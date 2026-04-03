@@ -22,7 +22,7 @@ jobs:
           node-version: "20"
 
       # --------------------------
-      # Clone iptv-org/epg
+      # Clone iptv-org/epg (تصحيح if)
       # --------------------------
       - name: Clone iptv-org/epg
         run: |
@@ -30,6 +30,7 @@ jobs:
             git clone --depth 1 https://github.com/iptv-org/epg.git
           else
             git -C epg pull
+          fi
 
       - name: Install dependencies
         run: |

@@ -1,4 +1,4 @@
-name: Update beIN Arabic Channels XML
+name: Bein.com Arabic EPG from Updated Channels
 
 on:
   schedule:
@@ -9,97 +9,56 @@ permissions:
   contents: write
 
 jobs:
-  update_bein_channels:
+  grab_bein_ar:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       # --------------------------
-      # Download current Bein XML
+      # Clone iptv-org/epg
       # --------------------------
-      - name: Download Bein Arabic Channels XML
+      - name: Clone iptv-org/epg
         run: |
-          mkdir -p bein
-          curl -L "https://github.com/iptv-org/epg/raw/master/sites/bein.com/bein.com_ar.channels.xml" -o bein/bein.com_ar.channels.xml
+          if [ ! -d "epg" ]; then
+            git clone --depth 1 https://github.com/iptv-org/epg.git
+          else
+            git -C epg pull
 
-      # --------------------------
-      # Update channel names
-      # --------------------------
-      - name: Update channel names for TiviMate
+      - name: Install dependencies
         run: |
-          node << 'EOF'
-          const fs = require('fs');
-          const xmlPath = 'bein/bein.com_ar.channels.xml';
-          let xml = fs.readFileSync(xmlPath, 'utf8');
-
-          // خريطة xmltv_id → اسم القناة الصحيح
-          const channelNames = {
-            "beINMovies1Premiere.qa@SD": "beIN Movies 1 Premiere",
-            "beINMovies2Action.qa@SD": "beIN Movies 2 Action",
-            "beINMovies3Drama.qa@SD": "beIN Movies 3 Drama",
-            "beINMovies4Family.qa@SD": "beIN Movies 4 Family",
-            "FoxMoviesMiddleEast.us@SD": "Fox Movies Middle East",
-            "FoxActionMoviesMENA.hk@SD": "Fox Action Movies MENA",
-            "StarMoviesMiddleEast.ae@SD": "Star Movies Middle East",
-            "beINSeries1.qa@SD": "beIN Series 1",
-            "beINSeries2.qa@SD": "beIN Series 2",
-            "beINDrama1.qa@SD": "beIN Drama 1",
-            "beINGourmet.qa@SD": "beIN Gourmet",
-            "TravelChannelEMEA.uk@SD": "Travel Channel",
-            "FoxArabia.ae@SD": "Fox Arabia",
-            "FoodNetworkEMEA.us@SD": "Food Network",
-            "HGTVArabia.us@SD": "HGTV Arabia",
-            "StarWorldMiddleEast.ae@SD": "Star World Middle East",
-            "Fatafeat.ae@SD": "Fatafeat",
-            "MTV80s.uk@SD": "MTV 80s",
-            "MTV90s.uk@SD": "MTV 90s",
-            "ClubMTVEurope.uk@SD": "Club MTV Europe",
-            "BeJunior.qa@SD": "BeJunior",
-            "BloombergTV.us@MiddleEast": "Bloomberg TV",
-            "NationalGeographicMiddleEast.uk@SD": "National Geographic",
-            "NationalGeographicWildMiddleEast.uk@SD": "National Geographic Wild",
-            "BBCEarth.uk@MiddleEast": "BBC Earth",
-            "AlJazeeraDocumentary.qa@SD": "Al Jazeera Documentary",
-            "CNNArabic.ae@SD": "CNN Arabic",
-            "EuronewsEnglish.fr@SD": "Euronews English",
-            "JeemTV.qa@SD": "Jeem TV",
-            "Baraem.qa@SD": "Baraem",
-            "CBeebiesMiddleEast.uk@SD": "CBeebies",
-            "BabyTV.uk@UK": "Baby TV",
-            "CartoonNetworkMENA.uk@SD": "Cartoon Network MENA",
-            "beINSportsNews.qa@SD": "beIN Sports News",
-            "beINSports.qa@MENA": "beIN Sports",
-            "beINSports1.qa@MENA": "beIN Sports 1",
-            "beINSports2.qa@MENA": "beIN Sports 2",
-            "beINSports3.qa@MENA": "beIN Sports 3",
-            "beINSports4.qa@MENA": "beIN Sports 4",
-            "beINSports5.qa@MENA": "beIN Sports 5",
-            "beINSports6.qa@MENA": "beIN Sports 6",
-            "beINSports7.qa@MENA": "beIN Sports 7"
-          };
-
-          // تحديث أسماء القنوات
-          xml = xml.replace(/<channel([^>]*)>(\d+)<\/channel>/gi, (match, attrs, number) => {
-            const xmltv_idMatch = attrs.match(/xmltv_id="([^"]+)"/);
-            if (!xmltv_idMatch) return match;
-            const xmltv_id = xmltv_idMatch[1];
-            const newName = channelNames[xmltv_id];
-            return newName ? `<channel${attrs}>${newName}</channel>` : match;
-          });
-
-          fs.writeFileSync('bein/bein.com_ar.channels.updated.xml', xml);
-          console.log('✅ Channel names updated for TiviMate');
-          EOF
+          cd epg
+          npm install
 
       # --------------------------
-      # Save XML to public
+      # Download updated channels XML
       # --------------------------
-      - name: Save updated XML
+      - name: Download updated Bein Arabic channels
+        run: |
+          mkdir -p epg/sites/bein.com
+          curl -L "https://raw.githubusercontent.com/ayoubboukous27/Multi-providers-EPG-/refs/heads/main/data/bein.com_ar.channels.xml" -o epg/sites/bein.com/bein.com_ar.channels.xml
+
+      # --------------------------
+      # Grab EPG using updated channels XML
+      # --------------------------
+      - name: Grab Bein EPG (Arabic)
+        run: |
+          cd epg
+          npm run grab --- --channels=sites/bein.com/bein.com_ar.channels.xml --lang=ar
+
+      # --------------------------
+      # Save XML
+      # --------------------------
+      - name: Save XML
         run: |
           mkdir -p public
-          cp bein/bein.com_ar.channels.updated.xml public/bein.com_ar.channels.updated.xml
+          cp epg/guide.xml public/epg-bein-ar.xml
 
       # --------------------------
       # Commit & Push
@@ -108,7 +67,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add public/bein.com_ar.channels.updated.xml
-          git diff-index --quiet HEAD || git commit -m "Update beIN Arabic channels names for TiviMate"
+          git add public/epg-bein-ar.xml
+          git diff-index --quiet HEAD || git commit -m "Update Bein.com Arabic EPG from updated channels"
           git pull --rebase origin main
           git push origin main

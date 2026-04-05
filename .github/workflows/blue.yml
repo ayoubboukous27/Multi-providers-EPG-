@@ -30,7 +30,7 @@ jobs:
       - name: Generate EPG (tv.blue.ch)
         run: |
           cd epg
-          npm run grab --- --site=tv.blue.ch --days=7
+          npm run grab --- --site=tv.blue.ch --days=15
 
       # --------------------------
       # Add logos: Blue Sports + RTS

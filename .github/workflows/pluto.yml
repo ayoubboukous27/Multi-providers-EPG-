@@ -45,7 +45,7 @@ jobs:
           cd epg
           # سيقوم بالاعتماد على ملفات القنوات لكل بلد
           for file in sites/pluto.tv/pluto.tv_*.channels.xml; do
-            npm run grab --- --site=pluto.tv --channels=$file --days=5
+            npm run grab --- --site=pluto.tv --channels=$file
           done
 
       # --------------------------

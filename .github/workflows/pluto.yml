@@ -1,0 +1,66 @@
+name: Pluto.tv FR EPG Update
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # تحديث يوميًا الساعة 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  grab_pluto_fr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # --------------------------
+      # Clone iptv-org/epg repo
+      # --------------------------
+      - name: Clone iptv-org/epg
+        run: |
+          if [ ! -d "epg" ]; then
+            git clone --depth 1 https://github.com/iptv-org/epg.git
+          else
+            git -C epg pull
+          fi
+
+      - name: Install dependencies
+        run: |
+          cd epg
+          npm install
+
+      # --------------------------
+      # Grab EPG for Pluto.tv (France)
+      # --------------------------
+      - name: Grab Pluto.tv French EPG
+        run: |
+          cd epg
+          npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto.tv_fr.channels.xml
+
+      # --------------------------
+      # Save XML
+      # --------------------------
+      - name: Save XML
+        run: |
+          mkdir -p public
+          cp epg/guide.xml public/epg-pluto-fr.xml
+
+      # --------------------------
+      # Commit & Push
+      # --------------------------
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add public/epg-pluto-fr.xml
+          git diff-index --quiet HEAD || git commit -m "Update Pluto.tv FR EPG"
+          git pull --rebase origin main
+          git push origin main

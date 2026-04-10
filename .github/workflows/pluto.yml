@@ -1,62 +1,63 @@
-name: Pluto.tv Multi-Country EPG Update
+name: Pluto FR Custom EPG
 
 on:
   schedule:
-    - cron: "0 6 * * *"  # تحديث يوميًا الساعة 06:00 UTC
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  grab_pluto:
+  pluto_fr:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 20
 
-      - name: Clone iptv-org/epg
+      - name: Clone EPG repo
         run: |
-          if [ ! -d "epg" ]; then
-            git clone --depth 1 https://github.com/iptv-org/epg.git
-          else
-            git -C epg pull
-          fi
-
-      - name: Install dependencies
-        run: |
+          git clone --depth 1 https://github.com/iptv-org/epg.git
           cd epg
           npm install
 
-      - name: Grab and tag EPG for all countries
+      # --------------------------
+      # استعمال ملفك فقط
+      # --------------------------
+      - name: Grab custom Pluto FR EPG
+        run: |
+          cd epg
+          npm run grab --- --site=pluto.tv --channels=../data/pluto_fr_custom.channels.xml
+
+      # --------------------------
+      # حفظ فقط الناتج
+      # --------------------------
+      - name: Save XML
         run: |
           mkdir -p public
-          COUNTRIES=("au" "br" "ca" "de" "dk" "es" "fi" "fr" "it" "latam" "no" "se" "uk" "us")
-          for CODE in "${COUNTRIES[@]}"; do
-            echo "⏳ Processing Pluto.tv $CODE..."
-            cd epg
-            npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto.tv_${CODE}.channels.xml
-            cd ..
+          cp epg/guide.xml public/epg-pluto-fr.xml
 
-            # إضافة country code داخل xmltv_id
-            node -e "const fs=require('fs'); const code='${CODE}'; let xml=fs.readFileSync('epg/guide.xml','utf8'); xml=xml.replace(/(<channel[^>]*xmltv_id=\")([^\"]+)(\")/gi,(m,start,id,end)=>{if(!id.includes('@')) return start+id+'.'+code+end; return m;}); fs.writeFileSync('public/epg-pluto-'+code+'.xml',xml); console.log('✅ Country code '+code+' applied');"
+      # --------------------------
+      # ضغط (اختياري لكن مهم)
+      # --------------------------
+      - name: Compress
+        run: |
+          gzip -f -k public/epg-pluto-fr.xml
 
-            # ضغط الملف
-            gzip -f -k public/epg-pluto-${CODE}.xml
-            echo "✅ Saved and compressed public/epg-pluto-${CODE}.xml.gz"
-          done
-
+      # --------------------------
+      # Commit
+      # --------------------------
       - name: Commit & Push
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add public/epg-pluto-*.xml public/epg-pluto-*.xml.gz
-          git diff-index --quiet HEAD || git commit -m "Update Pluto.tv EPG for all countries [skip ci]"
+          git add public/epg-pluto-fr.xml public/epg-pluto-fr.xml.gz
+          git diff-index --quiet HEAD || git commit -m "Update Pluto FR custom EPG"
           git pull --rebase origin main
           git push origin main

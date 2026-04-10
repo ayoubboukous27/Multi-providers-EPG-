@@ -1,8 +1,8 @@
-name: Pluto.tv EPG Update (multi-country + gzipped)
+name: Pluto.tv Multi-Country EPG Update
 
 on:
   schedule:
-    - cron: "0 6 * * *"  # يوميًا الساعة 06:00 UTC
+    - cron: "0 6 * * *"  # تحديث يوميًا الساعة 06:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -38,57 +38,37 @@ jobs:
           npm install
 
       # --------------------------
-      # Grab Pluto.tv EPG for all countries
+      # Define country codes and corresponding channel files
       # --------------------------
-      - name: Grab Pluto.tv EPG
-        run: |
-          cd epg
-          # سيقوم بالاعتماد على ملفات القنوات لكل بلد
-          for file in sites/pluto.tv/pluto.tv_*.channels.xml; do
-            npm run grab --- --site=pluto.tv --channels=$file
-          done
-
-      # --------------------------
-      # Add country code based on XML file name and gzip
-      # --------------------------
-      - name: Add country code & gzip
+      - name: Grab and tag EPG for all countries
         run: |
           mkdir -p public
-          node << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
+          COUNTRIES=("au" "br" "ca" "de" "dk" "es" "fi" "fr" "it" "latam" "no" "se" "uk" "us")
+          for CODE in "${COUNTRIES[@]}"; do
+            echo "⏳ Processing Pluto.tv $CODE..."
 
-          // جميع ملفات القنوات لكل بلد
-          const channelFiles = fs.readdirSync('epg/sites/pluto.tv').filter(f => f.endsWith('.channels.xml'));
+            # Grab EPG for this country
+            cd epg
+            npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto.tv_${CODE}.channels.xml
+            cd ..
 
-          channelFiles.forEach(file => {
-            // استنتاج country code من اسم الملف: pluto.tv_fr.channels.xml => fr
-            const match = file.match(/pluto\.tv_([a-z]+)\.channels\.xml$/i);
-            if (!match) return;
-            const countryCode = match[1].toLowerCase();
+            # Add country code to xmltv_id
+            node << EOF
+const fs = require('fs');
+const code = '${CODE}';
+let xml = fs.readFileSync('epg/guide.xml', 'utf8');
+xml = xml.replace(/(<channel[^>]*xmltv_id=")([^"]+)(")/gi, (match, start, id, end) => {
+  if (!id.includes('@')) return start + id + '.' + code + end;
+  return match;
+});
+fs.writeFileSync('public/epg-pluto-' + code + '.xml', xml);
+console.log('✅ Country code ' + code + ' applied');
+EOF
 
-            const inputFile = 'epg/guide.xml';
-            let xml = fs.readFileSync(inputFile, 'utf8');
-
-            // إضافة country code لكل قناة إذا لم يكن موجود
-            xml = xml.replace(/(<channel[^>]*xmltv_id=")([^"]+)"/gi, (match, start, xmltvId) => {
-              if (!xmltvId.includes('@')) {
-                return `${start}${countryCode}@${xmltvId}"`;
-              }
-              return match;
-            });
-
-            const outputFile = `public/epg-pluto-${countryCode}.xml`;
-            fs.writeFileSync(outputFile, xml);
-            console.log(`✅ Country code '${countryCode}' added -> ${outputFile}`);
-
-            // ضغط gzip
-            const zlib = require('zlib');
-            const gzip = zlib.gzipSync(xml);
-            fs.writeFileSync(outputFile + '.gz', gzip);
-            console.log(`✅ Compressed -> ${outputFile}.gz`);
-          });
-          EOF
+            # Compress file
+            gzip -f -k public/epg-pluto-${CODE}.xml
+            echo "✅ Saved and compressed public/epg-pluto-${CODE}.xml.gz"
+          done
 
       # --------------------------
       # Commit & Push
@@ -97,7 +77,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add public/epg-pluto-*.xml.gz
-          git diff-index --quiet HEAD || git commit -m "Update Pluto.tv EPG with country codes (gzipped)"
+          git add public/epg-pluto-*.xml public/epg-pluto-*.xml.gz
+          git diff-index --quiet HEAD || git commit -m "Update Pluto.tv EPG for all countries [skip ci]"
           git pull --rebase origin main
           git push origin main

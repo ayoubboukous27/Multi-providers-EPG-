@@ -1,4 +1,4 @@
-name: Pluto.tv FR EPG Update (5 days)
+name: Pluto.tv FR EPG Update (5 days, gzipped)
 
 on:
   schedule:
@@ -46,12 +46,14 @@ jobs:
           npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto.tv_fr.channels.xml --days=5
 
       # --------------------------
-      # Save XML
+      # Save & compress XML
       # --------------------------
-      - name: Save XML
+      - name: Save & compress XML
         run: |
           mkdir -p public
           cp epg/guide.xml public/epg-pluto-fr-5days.xml
+          gzip -f public/epg-pluto-fr-5days.xml
+          echo "✅ EPG saved and compressed to epg-pluto-fr-5days.xml.gz"
 
       # --------------------------
       # Commit & Push
@@ -60,7 +62,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add public/epg-pluto-fr-5days.xml
-          git diff-index --quiet HEAD || git commit -m "Update Pluto.tv FR EPG 5 days"
+          git add public/epg-pluto-fr-5days.xml.gz
+          git diff-index --quiet HEAD || git commit -m "Update Pluto.tv FR EPG 5 days (gzipped)"
           git pull --rebase origin main
           git push origin main

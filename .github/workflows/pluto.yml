@@ -21,9 +21,6 @@ jobs:
         with:
           node-version: "20"
 
-      # --------------------------
-      # Clone iptv-org/epg repo
-      # --------------------------
       - name: Clone iptv-org/epg
         run: |
           if [ ! -d "epg" ]; then
@@ -37,42 +34,24 @@ jobs:
           cd epg
           npm install
 
-      # --------------------------
-      # Define country codes and corresponding channel files
-      # --------------------------
       - name: Grab and tag EPG for all countries
         run: |
           mkdir -p public
           COUNTRIES=("au" "br" "ca" "de" "dk" "es" "fi" "fr" "it" "latam" "no" "se" "uk" "us")
           for CODE in "${COUNTRIES[@]}"; do
             echo "⏳ Processing Pluto.tv $CODE..."
-
-            # Grab EPG for this country
             cd epg
             npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto.tv_${CODE}.channels.xml
             cd ..
 
-            # Add country code to xmltv_id
-            node << EOF
-const fs = require('fs');
-const code = '${CODE}';
-let xml = fs.readFileSync('epg/guide.xml', 'utf8');
-xml = xml.replace(/(<channel[^>]*xmltv_id=")([^"]+)(")/gi, (match, start, id, end) => {
-  if (!id.includes('@')) return start + id + '.' + code + end;
-  return match;
-});
-fs.writeFileSync('public/epg-pluto-' + code + '.xml', xml);
-console.log('✅ Country code ' + code + ' applied');
-EOF
+            # إضافة country code داخل xmltv_id
+            node -e "const fs=require('fs'); const code='${CODE}'; let xml=fs.readFileSync('epg/guide.xml','utf8'); xml=xml.replace(/(<channel[^>]*xmltv_id=\")([^\"]+)(\")/gi,(m,start,id,end)=>{if(!id.includes('@')) return start+id+'.'+code+end; return m;}); fs.writeFileSync('public/epg-pluto-'+code+'.xml',xml); console.log('✅ Country code '+code+' applied');"
 
-            # Compress file
+            # ضغط الملف
             gzip -f -k public/epg-pluto-${CODE}.xml
             echo "✅ Saved and compressed public/epg-pluto-${CODE}.xml.gz"
           done
 
-      # --------------------------
-      # Commit & Push
-      # --------------------------
       - name: Commit & Push
         run: |
           git config user.name "github-actions"

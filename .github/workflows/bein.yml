@@ -1,15 +1,15 @@
-name: Grab beIN AR EPG
+name: Grab beIN Sports EN EPG (Full Program via Clone)
 
 on:
   schedule:
-    - cron: "0 6 * * *"  # تحديث يوميًا الساعة 06:00 UTC
+    - cron: "0 5 * * *"  # تحديث يوميًا الساعة 05:00 UTC
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  grab_bein_ar:
+  grab_bein_en:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       # --------------------------
-      # Setup Node.js
+      # Setup Node.js (latest stable)
       # --------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,28 +28,40 @@ jobs:
           node-version: "20"
 
       # --------------------------
-      # Install web-grab
+      # Clone iptv-org/epg repository
       # --------------------------
-      - name: Install web-grab
-        run: npm install web-grab@latest
-
-      # --------------------------
-      # Grab beIN Arabic EPG
-      # --------------------------
-      - name: Grab beIN AR EPG
+      - name: Clone iptv-org/epg
         run: |
-          mkdir -p epg
-          npx web-grab --- --site=bein.com --lang=ar
-          # سينتج guide.xml في المجلد الحالي
+          if [ ! -d "epg" ]; then
+            git clone --depth 1 https://github.com/iptv-org/epg.git
+          else
+            git -C epg pull
 
       # --------------------------
-      # Save XML
+      # Install dependencies
+      # --------------------------
+      - name: Install dependencies
+        run: |
+          cd epg
+          npm install
+
+      # --------------------------
+      # Grab beIN Sports English EPG (Full Program)
+      # --------------------------
+      - name: Grab beIN Sports EN EPG
+        run: |
+          cd epg
+          # هذا الأمر يستخدم سكريبت grab الأصلي داخل repo لإخراج كل البرامج
+          npm run grab --- --site=bein.com --lang=en
+
+      # --------------------------
+      # Save XML output
       # --------------------------
       - name: Save XML
         run: |
           mkdir -p public
-          cp guide.xml public/epg-bein-ar.xml
-          echo "✅ EPG saved to public/epg-bein-ar.xml"
+          cp epg/guide.xml public/epg-bein-en.xml
+          echo "✅ Full EPG saved to public/epg-bein-en.xml"
 
       # --------------------------
       # Commit & Push
@@ -58,7 +70,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add public/epg-bein-ar.xml
-          git diff-index --quiet HEAD || git commit -m "Update beIN AR EPG"
+          git add public/epg-bein-en.xml
+          git diff-index --quiet HEAD || git commit -m "Update beIN Sports EN Full EPG"
           git pull --rebase origin main
           git push origin main

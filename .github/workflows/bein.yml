@@ -32,10 +32,10 @@ jobs:
           cd epg
           npm install
 
-      - name: ▶️ Run grab for bein.com
+      - name: ▶️ Run grab for bein.com (7 days)
         run: |
           cd epg
-          npm run grab -- --site=bein.com --lang=en
+          npm run grab -- --site=bein.com --lang=en --days=7
 
       - name: ▶️ Parse channels for bein.com
         run: |
@@ -58,11 +58,8 @@ jobs:
           git add public/bein.com_en.channels.xml
 
           if ! git diff --cached --quiet; then
-            git commit -m "Update beIN EPG XML in /public"
+            git commit -m "Update beIN EPG XML in /public (7 days)"
           fi
 
-          # جلب أحدث التغييرات من الفرع main (وليس master)
           git pull --rebase origin main
-
-          # دفع إلى الفرع main
           git push origin main

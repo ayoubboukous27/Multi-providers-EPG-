@@ -1,8 +1,8 @@
-name: Bein.com Arabic EPG from Updated Channels
+name: Grab beIN Sports AR EPG
 
 on:
   schedule:
-    - cron: "0 7 * * *"  # تحديث يوميًا الساعة 07:00 UTC
+    - cron: "0 5 * * *"  # تحديث يوميًا الساعة 05:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -19,39 +19,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "node"  # استخدم أحدث نسخة مستقرة من Node.js
 
       # --------------------------
-      # Clone iptv-org/epg (تصحيح if)
+      # Install dependencies
       # --------------------------
-      - name: Clone iptv-org/epg
-        run: |
-          if [ ! -d "epg" ]; then
-            git clone --depth 1 https://github.com/iptv-org/epg.git
-          else
-            git -C epg pull
-          fi
-
       - name: Install dependencies
         run: |
-          cd epg
           npm install
 
       # --------------------------
-      # Download updated channels XML
+      # Grab beIN Sports Arabic EPG
       # --------------------------
-      - name: Download updated Bein Arabic channels
+      - name: Grab beIN Sports AR EPG
         run: |
-          mkdir -p epg/sites/bein.com
-          curl -L "https://raw.githubusercontent.com/ayoubboukous27/Multi-providers-EPG-/refs/heads/main/data/bein.com_ar.channels.xml" -o epg/sites/bein.com/bein.com_ar.channels.xml
-
-      # --------------------------
-      # Grab EPG using updated channels XML
-      # --------------------------
-      - name: Grab Bein EPG (Arabic)
-        run: |
-          cd epg
-          npm run grab --- --channels=sites/bein.com/bein.com_ar.channels.xml --lang=ar
+          npm run grab --- --site=bein.com --lang=ar
+          npm run channels:parse --- --config=./sites/bein.com/bein.com.config.js --output=./sites/bein.com/bein.com_ar.channels.xml --set=lang:ar
 
       # --------------------------
       # Save XML
@@ -59,7 +42,8 @@ jobs:
       - name: Save XML
         run: |
           mkdir -p public
-          cp epg/guide.xml public/epg-bein-ar.xml
+          cp ./sites/bein.com/bein.com_ar.channels.xml public/epg-bein-ar.xml
+          echo "✅ EPG saved to epg-bein-ar.xml"
 
       # --------------------------
       # Commit & Push
@@ -69,6 +53,6 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add public/epg-bein-ar.xml
-          git diff-index --quiet HEAD || git commit -m "Update Bein.com Arabic EPG from updated channels"
+          git diff-index --quiet HEAD || git commit -m "Update beIN Sports AR EPG"
           git pull --rebase origin main
           git push origin main

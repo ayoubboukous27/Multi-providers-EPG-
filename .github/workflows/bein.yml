@@ -1,4 +1,4 @@
-name: Grab beIN EPG AR
+name: Grab beIN AR EPG
 
 on:
   schedule:
@@ -13,35 +13,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------
+      # Checkout repository
+      # --------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --------------------------
+      # Setup Node.js
+      # --------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
       # --------------------------
-      # Install dependencies
+      # Install web-grab
       # --------------------------
-      - name: Install dependencies
-        run: |
-          npm install
+      - name: Install web-grab
+        run: npm install web-grab@latest
 
       # --------------------------
-      # Grab EPG for beIN (AR)
+      # Grab beIN Arabic EPG
       # --------------------------
       - name: Grab beIN AR EPG
         run: |
-          npm run grab --- --site=bein.com --lang=ar
+          mkdir -p epg
+          npx web-grab --- --site=bein.com --lang=ar
+          # سينتج guide.xml في المجلد الحالي
 
       # --------------------------
-      # Parse channels & generate XML
+      # Save XML
       # --------------------------
-      - name: Parse channels
+      - name: Save XML
         run: |
-          npm run channels:parse --- --config=./sites/bein.com/bein.com.config.js \
-          --output=./sites/bein.com/bein.com_ar.channels.xml --set=lang:ar
+          mkdir -p public
+          cp guide.xml public/epg-bein-ar.xml
+          echo "✅ EPG saved to public/epg-bein-ar.xml"
 
       # --------------------------
       # Commit & Push
@@ -50,7 +58,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add sites/bein.com/bein.com_ar.channels.xml
-          git diff-index --quiet HEAD || git commit -m "Update beIN AR EPG with programmes"
+          git add public/epg-bein-ar.xml
+          git diff-index --quiet HEAD || git commit -m "Update beIN AR EPG"
           git pull --rebase origin main
           git push origin main

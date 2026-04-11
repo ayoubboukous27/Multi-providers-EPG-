@@ -1,4 +1,4 @@
-name: Grab beIN Mena Package AR EPG
+name: Grab beIN Sports EN EPG
 
 on:
   schedule:
@@ -9,12 +9,12 @@ permissions:
   contents: write
 
 jobs:
-  grab_bein_ar:
+  grab_bein_en:
     runs-on: ubuntu-latest
 
     steps:
       # --------------------------
-      # Checkout the repository
+      # Checkout repository
       # --------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,13 +47,13 @@ jobs:
           npm install
 
       # --------------------------
-      # Grab beIN Sports Arabic EPG
+      # Grab beIN Sports English EPG
       # --------------------------
-      - name: Grab beIN Sports AR EPG
+      - name: Grab beIN Sports EN EPG
         run: |
           cd epg
-          npm run grab --- --site=bein.com --lang=ar
-          npm run channels:parse --- --config=./sites/bein.com/bein.com.config.js --output=./sites/bein.com/bein.com_ar.channels.xml --set=lang:ar
+          npm run grab --- --site=bein.com --lang=en
+          npm run channels:parse --- --config=./sites/bein.com/bein.com.config.js --output=./sites/bein.com/bein.com_en.channels.xml --set=lang:en
 
       # --------------------------
       # Save XML output
@@ -61,8 +61,8 @@ jobs:
       - name: Save XML
         run: |
           mkdir -p public
-          cp epg/sites/bein.com/bein.com_ar.channels.xml public/epg-bein-ar.xml
-          echo "✅ EPG saved to public/epg-bein-ar.xml"
+          cp epg/sites/bein.com/bein.com_en.channels.xml public/epg-bein-en.xml
+          echo "✅ EPG saved to public/epg-bein-en.xml"
 
       # --------------------------
       # Commit & Push
@@ -71,7 +71,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add public/epg-bein-ar.xml
-          git diff-index --quiet HEAD || git commit -m "Update beIN Sports AR EPG"
+          git add public/epg-bein-en.xml
+          git diff-index --quiet HEAD || git commit -m "Update beIN Sports EN EPG"
           git pull --rebase origin main
           git push origin main

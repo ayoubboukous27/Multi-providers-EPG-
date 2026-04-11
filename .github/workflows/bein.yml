@@ -17,7 +17,7 @@ jobs:
       - name: 📥 Checkout this repo
         uses: actions/checkout@v4
 
-      # Setup Node.js
+      # Setup Node.js LTS
       - name: 🟢 Setup Node.js LTS
         uses: actions/setup-node@v4
         with:
@@ -28,19 +28,19 @@ jobs:
         run: |
           git clone --depth 1 https://github.com/iptv-org/epg.git epg
 
-      # Install dependencies مع تشغيل postinstall
+      # تثبيت dependencies مع postinstall
       - name: 📦 Install dependencies
         run: |
           cd epg
           npm install
 
-      # Run grab
+      # Run grab لموقع bein.com
       - name: ▶️ Run grab for bein.com
         run: |
           cd epg
           npm run grab -- --site=bein.com --lang=en
 
-      # Parse channels
+      # Parse channels إلى XML
       - name: ▶️ Parse channels for bein.com
         run: |
           cd epg
@@ -49,7 +49,7 @@ jobs:
             --output=./sites/bein.com/bein.com_en.channels.xml \
             --set=lang:en
 
-      # Commit & Push الناتج
+      # Commit & Push الناتج باستخدام GITHUB_TOKEN
       - name: 💾 Commit & Push XML
         run: |
           cd epg
@@ -57,4 +57,4 @@ jobs:
           git config --global user.email "github-actions@github.com"
           git add sites/bein.com/bein.com_en.channels.xml
           git commit -m "Update beIN EPG" || echo "No changes to commit"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:master

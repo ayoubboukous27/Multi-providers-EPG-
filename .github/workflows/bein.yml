@@ -16,7 +16,7 @@ jobs:
       - name: 📥 Checkout this repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # مهم لجلب كل التاريخ لتجنب مشاكل rebase
+          fetch-depth: 0
 
       - name: 🟢 Setup Node.js LTS
         uses: actions/setup-node@v4
@@ -55,16 +55,14 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
 
-          # إضافة الملف
           git add public/bein.com_en.channels.xml
 
-          # عمل commit فقط إذا هناك تغييرات
           if ! git diff --cached --quiet; then
             git commit -m "Update beIN EPG XML in /public"
           fi
 
-          # جلب أحدث التغييرات من remote وإعادة تطبيق commits المحلية فوقها
-          git pull --rebase origin master
+          # جلب أحدث التغييرات من الفرع main (وليس master)
+          git pull --rebase origin main
 
-          # الآن push آمن
-          git push origin master
+          # دفع إلى الفرع main
+          git push origin main

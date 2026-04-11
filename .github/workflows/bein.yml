@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repo الخاص بك (لرفع الملفات)
+      # Checkout repo الخاص بك
       - name: 📥 Checkout this repo
         uses: actions/checkout@v4
 
@@ -49,12 +49,17 @@ jobs:
             --output=./sites/bein.com/bein.com_en.channels.xml \
             --set=lang:en
 
-      # Commit & Push الناتج باستخدام GITHUB_TOKEN
-      - name: 💾 Commit & Push XML
+      # Copy XML الناتج إلى مجلد output في repo الخاص بك
+      - name: 📂 Copy XML to repo
         run: |
-          cd epg
+          mkdir -p output
+          cp epg/sites/bein.com/bein.com_en.channels.xml output/bein.com_en.channels.xml
+
+      # Commit & Push الملف فقط
+      - name: 💾 Commit & Push XML only
+        run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add sites/bein.com/bein.com_en.channels.xml
+          git add output/bein.com_en.channels.xml
           git commit -m "Update beIN EPG" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:master

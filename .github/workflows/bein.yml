@@ -3,30 +3,34 @@ name: Update beIN EPG
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 */6 * * *" # كل 6 ساعات (يمكن تغييره)
+    - cron: "0 */6 * * *" # كل 6 ساعات
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  update-bein:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout repository
+      - name: 📥 Checkout this repo
         uses: actions/checkout@v4
 
-      - name: 🟢 Setup Node.js (latest LTS)
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
+
+      - name: 📂 Clone bein.com from iptv-org/epg
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/iptv-org/epg.git epg
+          cd epg
+          git sparse-checkout set sites/bein.com
 
       - name: 📦 Install dependencies
-        run: npm install
-
-      - name: 📂 Navigate to epg folder
-        run: cd epg
+        run: |
+          cd epg
+          npm install
 
       - name: ▶️ Run grab
         run: |
@@ -45,6 +49,6 @@ jobs:
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
-          git add .
+          git add epg/sites/bein.com/*.xml
           git commit -m "Update beIN EPG" || echo "No changes to commit"
           git push

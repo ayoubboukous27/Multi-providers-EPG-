@@ -1,4 +1,4 @@
-name: Pluto.tv FR EPG Update (gzip)
+name: Pluto.tv France
 
 on:
   schedule:
@@ -30,7 +30,6 @@ jobs:
             git clone --depth 1 https://github.com/iptv-org/epg.git
           else
             git -C epg pull
-          fi
 
       - name: Install dependencies
         run: |
@@ -47,12 +46,15 @@ jobs:
           https://raw.githubusercontent.com/ayoubboukous27/Multi-providers-EPG-/main/data/pluto_fr_custom.channels.xml
 
       # --------------------------
-      # Grab Pluto.tv French EPG (full available data)
+      # Grab Pluto.tv French EPG (7 days)
       # --------------------------
       - name: Grab Pluto.tv French EPG
         run: |
           cd epg
-          npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto_fr_custom.channels.xml
+          npx tsx scripts/commands/epg/grab.ts \
+            --channels=sites/pluto.tv/pluto_fr_custom.channels.xml \
+            --output=guide.xml \
+            --days=7
 
       # --------------------------
       # Save & compress XML

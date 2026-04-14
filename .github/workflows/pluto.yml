@@ -1,4 +1,4 @@
-name: Pluto.tv FR EPG Update (XML)
+name: Pluto.tv France
 
 on:
   schedule:

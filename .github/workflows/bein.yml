@@ -1,8 +1,8 @@
-name: Generate beIN MENA AR EPG (Modern)
+name: Generate beIN MENA AR EPG (7 days)
 
 on:
   schedule:
-    - cron: "0 5 * * *"  # يوميًا الساعة 05:00 UTC
+    - cron: "0 5 * * *"  # تحديث يوميًا الساعة 05:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       # --------------------------
-      # Setup Node.js (latest stable)
+      # Setup Node.js latest stable
       # --------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,7 +28,7 @@ jobs:
           node-version: "node"
 
       # --------------------------
-      # Clone iptv-org/epg repository
+      # Clone iptv-org/epg
       # --------------------------
       - name: Clone iptv-org/epg
         run: |
@@ -36,6 +36,7 @@ jobs:
             git clone --depth 1 https://github.com/iptv-org/epg.git
           else
             git -C epg pull
+          fi
 
       # --------------------------
       # Install dependencies
@@ -46,9 +47,20 @@ jobs:
           npm install
 
       # --------------------------
-      # Grab beIN MENA AR EPG
+      # Parse channel list (AR)
       # --------------------------
-      - name: Grab beIN MENA AR EPG
+      - name: Generate channels XML (AR)
+        run: |
+          cd epg
+          npx tsx scripts/commands/epg/channels.ts \
+            --config=sites/bein.com/bein.com.config.js \
+            --output=sites/bein.com/bein.com_ar.channels.xml \
+            --set=lang:ar
+
+      # --------------------------
+      # Grab EPG for AR channels
+      # --------------------------
+      - name: Grab beIN EPG (AR)
         run: |
           cd epg
           npx tsx scripts/commands/epg/grab.ts \
@@ -57,24 +69,12 @@ jobs:
             --days=7
 
       # --------------------------
-      # Parse channels (optional, just to normalize)
+      # Save XML
       # --------------------------
-      - name: Parse channels
-        run: |
-          cd epg
-          npx tsx scripts/commands/epg/parse.ts \
-            --config=./sites/bein.com/bein.com.config.js \
-            --output=./sites/bein.com/bein.com_ar.channels.xml \
-            --set=lang:ar
-
-      # --------------------------
-      # Save output to public
-      # --------------------------
-      - name: Save EPG XML
+      - name: Save EPG
         run: |
           mkdir -p public
-          cp epg/guide_bein_ar.xml public/epg-bein-ar.xml
-          echo "✅ EPG saved to public/epg-bein-ar.xml"
+          cp epg/guide_bein_ar.xml public/epg-bein-mena-ar.xml
 
       # --------------------------
       # Commit & Push
@@ -83,7 +83,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add public/epg-bein-ar.xml
+          git add public/epg-bein-mena-ar.xml
           git diff-index --quiet HEAD || git commit -m "Update beIN MENA AR EPG"
           git pull --rebase origin main
           git push origin main

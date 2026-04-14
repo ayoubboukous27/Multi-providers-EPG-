@@ -1,336 +1,336 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tv date="20260414">
   <channel id="beINMovies1Premiere.qa@SD">
-    <display-name>1</display-name>
+    <display-name>beINMovies1Premiere.qa@SD</display-name>
     <icon src="https://i.imgur.com/SmAq8yM.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINMovies2Action.qa@SD">
-    <display-name>2</display-name>
+    <display-name>beINMovies2Action.qa@SD</display-name>
     <icon src="https://i.imgur.com/jMGd93V.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINMovies3Drama.qa@SD">
-    <display-name>3</display-name>
+    <display-name>beINMovies3Drama.qa@SD</display-name>
     <icon src="https://i.imgur.com/STmIWSa.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINMovies4Family.qa@SD">
-    <display-name>4</display-name>
+    <display-name>beINMovies4Family.qa@SD</display-name>
     <icon src="https://i.imgur.com/CjFA3mj.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="FoxMoviesMiddleEast.us@SD">
-    <display-name>5</display-name>
+    <display-name>FoxMoviesMiddleEast.us@SD</display-name>
     <icon src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Fox_Movies_%28Asia%29_logo.svg/960px-Fox_Movies_%28Asia%29_logo.svg.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="FoxActionMoviesMENA.hk@SD">
-    <display-name>6</display-name>
+    <display-name>FoxActionMoviesMENA.hk@SD</display-name>
     <icon src="https://i.imgur.com/UkNkpCe.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="StarMoviesMiddleEast.ae@SD">
-    <display-name>7</display-name>
+    <display-name>StarMoviesMiddleEast.ae@SD</display-name>
     <icon src="https://i.imgur.com/JhT3k6R.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSeries1.qa@SD">
-    <display-name>8</display-name>
+    <display-name>beINSeries1.qa@SD</display-name>
     <icon src="https://i.imgur.com/nCkbPOD.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSeries2.qa@SD">
-    <display-name>9</display-name>
+    <display-name>beINSeries2.qa@SD</display-name>
     <icon src="https://i.imgur.com/c0B8bmf.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINDrama1.qa@SD">
-    <display-name>10</display-name>
+    <display-name>beINDrama1.qa@SD</display-name>
     <icon src="https://i.imgur.com/d6AGFro.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINGourmet.qa@SD">
-    <display-name>11</display-name>
+    <display-name>beINGourmet.qa@SD</display-name>
     <icon src="https://i.imgur.com/Iqvl7GS.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="TravelChannelEMEA.uk@SD">
-    <display-name>12</display-name>
+    <display-name>TravelChannelEMEA.uk@SD</display-name>
     <url>https://bein.com</url>
   </channel>
   <channel id="FoxArabia.ae@SD">
-    <display-name>13</display-name>
+    <display-name>FoxArabia.ae@SD</display-name>
     <icon src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/FOX_wordmark-orange.svg/960px-FOX_wordmark-orange.svg.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="FoodNetworkEMEA.us@SD">
-    <display-name>14</display-name>
+    <display-name>FoodNetworkEMEA.us@SD</display-name>
     <icon src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Food_Network_New_Logo.png/960px-Food_Network_New_Logo.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="HGTVArabia.us@SD">
-    <display-name>15</display-name>
+    <display-name>HGTVArabia.us@SD</display-name>
     <icon src="https://i.imgur.com/xJ0f09L.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="StarWorldMiddleEast.ae@SD">
-    <display-name>16</display-name>
+    <display-name>StarWorldMiddleEast.ae@SD</display-name>
     <icon src="https://i.imgur.com/TD8d1eQ.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="Fatafeat.ae@SD">
-    <display-name>17</display-name>
+    <display-name>Fatafeat.ae@SD</display-name>
     <icon src="https://i.imgur.com/jCsUXTk.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="MTV80s.uk@SD">
-    <display-name>18</display-name>
+    <display-name>MTV80s.uk@SD</display-name>
     <icon src="https://i.imgur.com/N9e5hv5.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="MTV90s.uk@SD">
-    <display-name>19</display-name>
+    <display-name>MTV90s.uk@SD</display-name>
     <icon src="https://i.imgur.com/au5zhwP.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="ClubMTVEurope.uk@SD">
-    <display-name>20</display-name>
+    <display-name>ClubMTVEurope.uk@SD</display-name>
     <icon src="https://i.imgur.com/FD6eQI3.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="BeJunior.qa@SD">
-    <display-name>21</display-name>
+    <display-name>BeJunior.qa@SD</display-name>
     <icon src="https://i.imgur.com/xuId6Os.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="BloombergTV.us@MiddleEast">
-    <display-name>22</display-name>
+    <display-name>BloombergTV.us@MiddleEast</display-name>
     <icon src="https://i.imgur.com/OuogLHx.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="NationalGeographicMiddleEast.uk@SD">
-    <display-name>23</display-name>
+    <display-name>NationalGeographicMiddleEast.uk@SD</display-name>
     <icon src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Natgeologo.svg/960px-Natgeologo.svg.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="NationalGeographicWildMiddleEast.uk@SD">
-    <display-name>24</display-name>
+    <display-name>NationalGeographicWildMiddleEast.uk@SD</display-name>
     <icon src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/National_Geographic_Wild_logo.svg/960px-National_Geographic_Wild_logo.svg.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="BBCEarth.uk@MiddleEast">
-    <display-name>25</display-name>
+    <display-name>BBCEarth.uk@MiddleEast</display-name>
     <icon src="https://i.imgur.com/nGSsUd4.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="AlJazeeraDocumentary.qa@SD">
-    <display-name>26</display-name>
+    <display-name>AlJazeeraDocumentary.qa@SD</display-name>
     <icon src="https://i.imgur.com/5dNJlLo.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="CNNArabic.ae@SD">
-    <display-name>27</display-name>
+    <display-name>CNNArabic.ae@SD</display-name>
     <icon src="https://i.imgur.com/8WXOnLF.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="EuronewsEnglish.fr@SD">
-    <display-name>28</display-name>
+    <display-name>EuronewsEnglish.fr@SD</display-name>
     <icon src="https://a.jsrdn.com/hls/22886/euronews/extras/1080_logo.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="JeemTV.qa@SD">
-    <display-name>29</display-name>
+    <display-name>JeemTV.qa@SD</display-name>
     <icon src="https://i.imgur.com/dvCrNQ8.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="Baraem.qa@SD">
-    <display-name>30</display-name>
+    <display-name>Baraem.qa@SD</display-name>
     <icon src="https://i.imgur.com/7woV4Cz.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="CBeebiesMiddleEast.uk@SD">
-    <display-name>31</display-name>
+    <display-name>CBeebiesMiddleEast.uk@SD</display-name>
     <icon src="https://upload.wikimedia.org/wikipedia/en/thumb/1/16/CBeebies.svg/960px-CBeebies.svg.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="BabyTV.uk@UK">
-    <display-name>32</display-name>
+    <display-name>BabyTV.uk@UK</display-name>
     <icon src="https://i.imgur.com/4BDJ5FT.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="CartoonNetworkMENA.uk@SD">
-    <display-name>33</display-name>
+    <display-name>CartoonNetworkMENA.uk@SD</display-name>
     <icon src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/960px-Cartoon_Network_2010_logo.svg.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsNews.qa@SD">
-    <display-name>1</display-name>
+    <display-name>beINSportsNews.qa@SD</display-name>
     <icon src="https://i.imgur.com/ZNjQzR5.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports.qa@MENA">
-    <display-name>2</display-name>
+    <display-name>beINSports.qa@MENA</display-name>
     <icon src="https://i.imgur.com/RLrMBlm.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports1.qa@MENA">
-    <display-name>3</display-name>
+    <display-name>beINSports1.qa@MENA</display-name>
     <icon src="https://i.imgur.com/Vtk2cGI.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports2.qa@MENA">
-    <display-name>4</display-name>
+    <display-name>beINSports2.qa@MENA</display-name>
     <icon src="https://i.imgur.com/vUJZSvs.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports3.qa@MENA">
-    <display-name>5</display-name>
+    <display-name>beINSports3.qa@MENA</display-name>
     <icon src="https://i.imgur.com/UYSMao3.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports4.qa@MENA">
-    <display-name>6</display-name>
+    <display-name>beINSports4.qa@MENA</display-name>
     <icon src="https://i.imgur.com/vwAgJNi.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports5.qa@MENA">
-    <display-name>7</display-name>
+    <display-name>beINSports5.qa@MENA</display-name>
     <icon src="https://i.imgur.com/2Rha5aY.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports6.qa@MENA">
-    <display-name>8</display-name>
+    <display-name>beINSports6.qa@MENA</display-name>
     <icon src="https://i.imgur.com/0wBdLYb.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSports7.qa@MENA">
-    <display-name>9</display-name>
+    <display-name>beINSports7.qa@MENA</display-name>
     <icon src="https://i.imgur.com/iODFwZi.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsPremium1.qa@SD">
-    <display-name>10</display-name>
+    <display-name>beINSportsPremium1.qa@SD</display-name>
     <icon src="https://i.imgur.com/HELtOAC.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsPremium2.qa@SD">
-    <display-name>11</display-name>
+    <display-name>beINSportsPremium2.qa@SD</display-name>
     <icon src="https://i.imgur.com/6HBpC0r.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsPremium3.qa@SD">
-    <display-name>12</display-name>
+    <display-name>beINSportsPremium3.qa@SD</display-name>
     <icon src="https://i.imgur.com/2vxVwxF.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsXtra1.qa@SD">
-    <display-name>13</display-name>
+    <display-name>beINSportsXtra1.qa@SD</display-name>
     <icon src="https://i.imgur.com/O9lTxQA.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsXtra2.qa@SD">
-    <display-name>14</display-name>
+    <display-name>beINSportsXtra2.qa@SD</display-name>
     <icon src="https://i.imgur.com/08Y2CW1.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beIN4K.qa@SD">
-    <display-name>15</display-name>
+    <display-name>beIN4K.qa@SD</display-name>
     <icon src="https://i.imgur.com/TTxh9tZ.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsAFC.qa@SD">
-    <display-name>16</display-name>
+    <display-name>beINSportsAFC.qa@SD</display-name>
     <icon src="https://i.imgur.com/HOj98bH.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsAFC1.qa@SD">
-    <display-name>17</display-name>
+    <display-name>beINSportsAFC1.qa@SD</display-name>
     <icon src="https://i.imgur.com/nk3JCpg.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsAFC2.qa@SD">
-    <display-name>18</display-name>
+    <display-name>beINSportsAFC2.qa@SD</display-name>
     <icon src="https://i.imgur.com/WITLbxq.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsAFC3.qa@SD">
-    <display-name>19</display-name>
+    <display-name>beINSportsAFC3.qa@SD</display-name>
     <icon src="https://i.imgur.com/ruRe9oj.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsEnglish1.qa@SD">
-    <display-name>20</display-name>
+    <display-name>beINSportsEnglish1.qa@SD</display-name>
     <icon src="https://i.imgur.com/uqVwDrB.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsEnglish2.qa@SD">
-    <display-name>21</display-name>
+    <display-name>beINSportsEnglish2.qa@SD</display-name>
     <icon src="https://i.imgur.com/dWNbCyx.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsEnglish3.qa@SD">
-    <display-name>22</display-name>
+    <display-name>beINSportsEnglish3.qa@SD</display-name>
     <icon src="https://i.imgur.com/7bxQaJI.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsNBA.qa@SD">
-    <display-name>23</display-name>
+    <display-name>beINSportsNBA.qa@SD</display-name>
     <icon src="https://i.imgur.com/QmSc6kh.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsFrench1.qa@SD">
-    <display-name>24</display-name>
+    <display-name>beINSportsFrench1.qa@SD</display-name>
     <icon src="https://i.imgur.com/tXqMkzA.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsFrench2.qa@SD">
-    <display-name>25</display-name>
+    <display-name>beINSportsFrench2.qa@SD</display-name>
     <icon src="https://i.imgur.com/EG48QI7.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsFrench3.qa@SD">
-    <display-name>26</display-name>
+    <display-name>beINSportsFrench3.qa@SD</display-name>
     <icon src="https://i.imgur.com/YbzCxeF.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsMax1.qa@MENA">
-    <display-name>27</display-name>
+    <display-name>beINSportsMax1.qa@MENA</display-name>
     <icon src="https://i.imgur.com/FjWQjdy.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsMax2.qa@MENA">
-    <display-name>28</display-name>
+    <display-name>beINSportsMax2.qa@MENA</display-name>
     <icon src="https://i.imgur.com/5dBc5rn.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsMax3.qa@MENA">
-    <display-name>29</display-name>
+    <display-name>beINSportsMax3.qa@MENA</display-name>
     <icon src="https://i.imgur.com/ThcM2LE.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsMax4.qa@MENA">
-    <display-name>30</display-name>
+    <display-name>beINSportsMax4.qa@MENA</display-name>
     <icon src="https://i.imgur.com/j7osMfM.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsMax5.qa@MENA">
-    <display-name>31</display-name>
+    <display-name>beINSportsMax5.qa@MENA</display-name>
     <icon src="https://i.imgur.com/L6TvXAi.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="beINSportsMax6.qa@MENA">
-    <display-name>32</display-name>
+    <display-name>beINSportsMax6.qa@MENA</display-name>
     <icon src="https://i.imgur.com/GHZHRPF.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="AlkassThree.qa@SD">
-    <display-name>33</display-name>
+    <display-name>AlkassThree.qa@SD</display-name>
     <icon src="https://i.imgur.com/d57BdFh.png"/>
     <url>https://bein.com</url>
   </channel>
   <channel id="AlkassOne.qa@SD">
-    <display-name>34</display-name>
+    <display-name>AlkassOne.qa@SD</display-name>
     <icon src="https://i.imgur.com/10mmlha.png"/>
     <url>https://bein.com</url>
   </channel>

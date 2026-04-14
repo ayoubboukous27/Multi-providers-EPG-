@@ -2,7 +2,7 @@ name: SFR France
 
 on:
   schedule:
-    - cron: "0 4 * * *" # يوميًا الساعة 04:00 UTC
+    - cron: "0 4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -13,23 +13,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # --------------------------
-      # Checkout repository
-      # --------------------------
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # --------------------------
-      # Setup Node.js
-      # --------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # --------------------------
-      # Clone iptv-org/epg repository
-      # --------------------------
       - name: Clone iptv-org/epg
         run: |
           if [ ! -d "epg" ]; then
@@ -38,9 +29,6 @@ jobs:
             git -C epg pull
           fi
 
-      # --------------------------
-      # Install dependencies
-      # --------------------------
       - name: Install dependencies
         run: |
           cd epg
@@ -48,27 +36,21 @@ jobs:
           npm install xml2js
 
       # --------------------------
-      # Grab SFR TV EPG
+      # Grab SFR TV EPG using channels file
       # --------------------------
       - name: Grab SFR TV EPG (7 days)
         run: |
           cd epg
           npx tsx scripts/commands/epg/grab.ts \
-            --config=sites/tv.sfr.fr/tv.sfr.fr.config.js \
+            --channels=sites/tv.sfr.fr/tv.sfr.fr.channels.xml \
             --output=guide_sfr.xml \
             --days=7
 
-      # --------------------------
-      # Save output
-      # --------------------------
       - name: Save EPG XML
         run: |
           mkdir -p public
           cp epg/guide_sfr.xml public/epg-tv-sfr.xml
 
-      # --------------------------
-      # Commit & Push
-      # --------------------------
       - name: Commit & Push
         run: |
           git config user.name "github-actions"

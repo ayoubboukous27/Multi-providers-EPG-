@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -23,14 +23,21 @@ jobs:
 
       - name: Clone EPG repo
         run: |
-          git clone --depth 1 https://github.com/iptv-org/epg.git
+          if [ ! -d "epg" ]; then
+            git clone --depth 1 https://github.com/iptv-org/epg.git
+          else
+            git -C epg pull
+          fi
           cd epg
           npm install
 
       - name: Generate EPG (tv.blue.ch)
         run: |
           cd epg
-          npm run grab --- --site=tv.blue.ch --days=10
+          npx tsx scripts/commands/epg/grab.ts \
+            --channels=sites/tv.blue.ch/tv.blue.ch.channels.xml \
+            --output=guide.xml \
+            --days=10
 
       # --------------------------
       # Add logos: Blue Sports + RTS
@@ -41,7 +48,6 @@ jobs:
           const fs = require('fs');
           let xml = fs.readFileSync('epg/guide.xml', 'utf8');
 
-          // روابط الشعارات
           const logosById = {
             "RTS1.ch@SD": "https://raw.githubusercontent.com/ayoubboukous27/Event/refs/heads/main/Logos/rts1.png",
             "RTS2.ch@SD": "https://raw.githubusercontent.com/ayoubboukous27/Event/refs/heads/main/Logos/rts2.png"
@@ -49,10 +55,7 @@ jobs:
 
           const blueLogo = "https://raw.githubusercontent.com/ayoubboukous27/Event/refs/heads/main/Logos/blue-sports.png";
 
-          // استبدال أي شعار موجود لكل قناة محددة
           xml = xml.replace(/(<channel[^>]*>)([\s\S]*?)(<\/channel>)/gi, (match, start, middle, end) => {
-
-            // أولاً: قنوات RTS1 و RTS2 حسب xmltv_id
             const idMatch = match.match(/id=["']([^"']+)["']/i);
             if (idMatch) {
               const channelId = idMatch[1];
@@ -62,7 +65,6 @@ jobs:
               }
             }
 
-            // ثانياً: أي قناة تحتوي اسمها "blue sport" (غير حساس لحالة الأحرف)
             if (/blue sport/i.test(middle)) {
               const cleaned = middle.replace(/<icon[^>]*\/>/gi, '');
               return `${start}<icon src="${blueLogo}"/>${cleaned}${end}`;
@@ -72,7 +74,7 @@ jobs:
           });
 
           fs.writeFileSync('epg/guide.xml', xml);
-          console.log('✅ Logos applied: RTS1, RTS2, and Blue Sports channels');
+          console.log('✅ Logos applied: RTS1, RTS2, Blue Sports');
           EOF
 
       - name: Save XML

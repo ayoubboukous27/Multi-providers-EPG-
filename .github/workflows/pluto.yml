@@ -30,6 +30,7 @@ jobs:
             git clone --depth 1 https://github.com/iptv-org/epg.git
           else
             git -C epg pull
+          fi
 
       - name: Install dependencies
         run: |
@@ -37,24 +38,12 @@ jobs:
           npm install
 
       # --------------------------
-      # Download custom channels XML
-      # --------------------------
-      - name: Download custom channels XML
-        run: |
-          mkdir -p epg/sites/pluto.tv
-          curl -L -o epg/sites/pluto.tv/pluto_fr_custom.channels.xml \
-          https://raw.githubusercontent.com/ayoubboukous27/Multi-providers-EPG-/main/data/pluto_fr_custom.channels.xml
-
-      # --------------------------
-      # Grab Pluto.tv French EPG (7 days)
+      # Grab Pluto.tv French EPG
       # --------------------------
       - name: Grab Pluto.tv French EPG
         run: |
           cd epg
-          npx tsx scripts/commands/epg/grab.ts \
-            --channels=sites/pluto.tv/pluto_fr_custom.channels.xml \
-            --output=guide.xml \
-            --days=7
+          npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto.tv_fr.channels.xml
 
       # --------------------------
       # Save & compress XML

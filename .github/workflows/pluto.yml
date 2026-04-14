@@ -38,12 +38,14 @@ jobs:
           npm install
 
       # --------------------------
-      # Grab Pluto.tv French EPG
+      # Grab Pluto.tv French EPG using channels file
       # --------------------------
       - name: Grab Pluto.tv French EPG
         run: |
           cd epg
-          npm run grab --- --site=pluto.tv --channels=sites/pluto.tv/pluto.tv_fr.channels.xml
+          npx tsx scripts/commands/epg/grab.ts \
+            --channels=sites/pluto.tv/pluto.tv_fr.channels.xml \
+            --output=guide.xml
 
       # --------------------------
       # Save & compress XML

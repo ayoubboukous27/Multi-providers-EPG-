@@ -1,8 +1,8 @@
-name: beIN MENA AR EPG
+name: beIN MENA AR
 
 on:
   schedule:
-    - cron: "0 5 * * *"  # يوميًا الساعة 05:00 UTC
+    - cron: "0 5 * * *"  # تحديث يوميًا الساعة 05:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -13,14 +13,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------
+      # Checkout repository
+      # --------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --------------------------
+      # Setup Node.js
+      # --------------------------
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "node"
 
+      # --------------------------
+      # Clone iptv-org/epg
+      # --------------------------
       - name: Clone iptv-org/epg
         run: |
           if [ ! -d "epg" ]; then
@@ -29,20 +38,29 @@ jobs:
             git -C epg pull
           fi
 
+      # --------------------------
+      # Install dependencies
+      # --------------------------
       - name: Install dependencies
         run: |
           cd epg
           npm install
           npm install xml2js
 
+      # --------------------------
+      # Grab beIN MENA AR EPG (7 days)
+      # --------------------------
       - name: Grab beIN MENA AR EPG
         run: |
           cd epg
           npx tsx scripts/commands/epg/grab.ts \
-            --channels=sites/bein.com/beinsports.com_mena-ar.channels.xml \
+            --channels=sites/bein.com/bein.com_ar.channels.xml \
             --output=guide_bein_ar.xml \
             --days=7
 
+      # --------------------------
+      # Set Display Name = Channel ID
+      # --------------------------
       - name: Set Display Name = Channel ID
         run: |
           cd epg
@@ -50,13 +68,15 @@ jobs:
           const fs = require('fs');
           const xml2js = require('xml2js');
 
-          const epgXml = fs.readFileSync('guide_bein_ar.xml', 'utf-8');
+          const file = 'guide_bein_ar.xml';
+          const xmlData = fs.readFileSync(file, 'utf-8');
+
           const parser = new xml2js.Parser();
-          parser.parseString(epgXml, (err, epgRes) => {
+          parser.parseString(xmlData, (err, result) => {
             if (err) throw err;
 
-            if (epgRes.tv && epgRes.tv.channel) {
-              epgRes.tv.channel.forEach(ch => {
+            if (result.tv && result.tv.channel) {
+              result.tv.channel.forEach(ch => {
                 const id = ch.$.id;
                 if (ch['display-name']) {
                   ch['display-name'][0] = id;
@@ -69,11 +89,15 @@ jobs:
             const builder = new xml2js.Builder({
               xmldec: { version: '1.0', encoding: 'UTF-8' }
             });
-            const xmlOut = builder.buildObject(epgRes);
+            const xmlOut = builder.buildObject(result);
+
             fs.writeFileSync('../public/epg-bein-mena-ar.xml', xmlOut, 'utf-8');
           });
           EOF
 
+      # --------------------------
+      # Commit & Push
+      # --------------------------
       - name: Commit & Push
         run: |
           git config user.name "github-actions"
